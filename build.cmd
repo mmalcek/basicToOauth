@@ -1,0 +1,1 @@
+go build -trimpath -ldflags "-s -w" -a
