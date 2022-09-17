@@ -10,6 +10,14 @@ This package provides a simple way to migrate from basic authentication to OAuth
 - Application gets basic header and transform it to OAuth header. Rest of the request is passed to the target service unchanged.
 - Application has been created mainly for Exchange Web Services (EWS) but it should work also with other services.
 
+## You can download Windows version from here:
+https://github.com/mmalcek/basicToOauth/releases
+<br />
+[Direct download link](https://github.com/mmalcek/basicToOauth/releases/download/v1.0.0/basicToOauth_WIN_amd64_v1-0-0.zip)
+<br />
+Note: Currently only Windows prebuild binary is available. I'll build Linux or Mac on request.
+
+
 ### Configuration (config.yaml):
 ```YAML
 host: "127.0.0.1" # Host of the relay service
@@ -25,12 +33,12 @@ host 127.0.0.1 is HIGHLY RECOMMENDED because comunication between relay service 
 
 
 ### Installation options:
-1. you can just start the application and watch communication in command line.
-2. Install as SERVICE 
-    - **.\basicToOauth -service install**
-    - **.\basicToOauth -service start**
-    - **.\basicToOauth -service stop**
-    - **.\basicToOauth -service uninstall**
+1. You can just start the application and watch communication in command line.
+2. Or install as SERVICE - Open command line as administrator and run: 
+    - **.\basicToOauth.exe -service install**
+    - **.\basicToOauth.exe -service start**
+    - **.\basicToOauth.exe -service stop**
+    - **.\basicToOauth.exe -service uninstall**
 
 Once the application is running, you can use it in your application so instead "https://outlook.office365.com/..." just use "http://127.0.0.1:8085/..."
 

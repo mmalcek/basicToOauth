@@ -10,6 +10,8 @@ import (
 	"github.com/kardianos/service"
 )
 
+const VERSION = "1.0.0"
+
 type (
 	program struct {
 		exit chan struct{}

@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/base64"
+	"fmt"
 	"net"
 	"net/http"
 	"net/http/httputil"
@@ -27,6 +28,7 @@ func (p *program) run() {
 	r := gin.Default()
 	r.Any("/*proxyPath", proxy)
 	go r.Run(net.JoinHostPort(config.Host, config.Port))
+	fmt.Printf("basicToOauth version: %s, started on: %s\r\n", VERSION, net.JoinHostPort(config.Host, config.Port))
 
 	go func() { // Check and delete expired tokens every 5 minutes
 		for {
