@@ -10,7 +10,7 @@ import (
 	"github.com/kardianos/service"
 )
 
-const VERSION = "1.0.0"
+const VERSION = "1.0.1"
 
 type (
 	program struct {

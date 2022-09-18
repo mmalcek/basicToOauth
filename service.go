@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/base64"
-	"fmt"
 	"net"
 	"net/http"
 	"net/http/httputil"
@@ -28,7 +27,7 @@ func (p *program) run() {
 	r := gin.Default()
 	r.Any("/*proxyPath", proxy)
 	go r.Run(net.JoinHostPort(config.Host, config.Port))
-	fmt.Printf("basicToOauth version: %s, started on: %s\r\n", VERSION, net.JoinHostPort(config.Host, config.Port))
+	logger.Infof("basicToOauth version: %s, started on: %s\r\n", VERSION, net.JoinHostPort(config.Host, config.Port))
 
 	go func() { // Check and delete expired tokens every 5 minutes
 		for {
@@ -74,6 +73,7 @@ func getAuthHeader(authHeader string) string {
 			if mapToken.expire.Unix()-60 < time.Now().Unix() { // If token is about to expire try to get new one
 				newToken, err := getAzureToken(currHeader[1])
 				if err != nil {
+					logger.Warningf("ERR-getAzureToken: %v", err.Error())
 					return authHeader
 				}
 				tokensMap.add(currHeader[1], newToken) // Add new token to map
@@ -82,6 +82,7 @@ func getAuthHeader(authHeader string) string {
 		} else { // If token is not in map
 			newToken, err := getAzureToken(currHeader[1]) // Get new token
 			if err != nil {
+				logger.Warningf("ERR-getAzureToken: %v", err.Error())
 				return authHeader
 			}
 			tokensMap.add(currHeader[1], newToken) // Add new token to map

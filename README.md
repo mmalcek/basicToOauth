@@ -29,7 +29,7 @@ authority_url: "https://login.microsoftonline.com/" # URL of the authority servi
 scopes:
   - "https://outlook.office365.com/EWS.AccessAsUser.All" # Scopes for the target service
 ```
-host 127.0.0.1 is HIGHLY RECOMMENDED because comunication between relay service and your application is not encrypted.
+host 127.0.0.1 is HIGHLY RECOMMENDED because comunication between relay service and your application is not encrypted. In other words, basicToOauth app should be on the same machine as your application.
 
 
 ### Installation options:
