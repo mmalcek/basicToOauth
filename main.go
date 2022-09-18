@@ -10,7 +10,7 @@ import (
 	"github.com/kardianos/service"
 )
 
-const VERSION = "1.0.1"
+const VERSION = "1.0.2"
 
 type (
 	program struct {
@@ -73,11 +73,6 @@ func main() {
 }
 
 func (p *program) Start(s service.Service) error {
-	if service.Interactive() {
-		logger.Info("Running in terminal.")
-	} else {
-		logger.Info("Running under service manager.")
-	}
 	p.exit = make(chan struct{})
 	go p.run()
 	return nil
@@ -85,9 +80,7 @@ func (p *program) Start(s service.Service) error {
 
 func (p *program) Stop(s service.Service) error {
 	time.Sleep(1 * time.Second)
-
 	logger.Info("Stopped")
-
 	close(p.exit)
 	return nil
 }

@@ -32,7 +32,7 @@ func (p *program) run() {
 	go func() { // Check and delete expired tokens every 5 minutes
 		for {
 			tokensMap.delExpired()
-			time.Sleep(5 * time.Minute)
+			time.Sleep(10 * time.Minute)
 		}
 	}()
 
@@ -67,7 +67,7 @@ func getAuthHeader(authHeader string) string {
 		return authHeader
 	}
 	currHeader := strings.Split(authHeader, " ")
-	if currHeader[0] == "Basic" && len(currHeader) == 2 { // If token seems to be Basic
+	if currHeader[0] == "Basic" && len(currHeader) == 2 { // If authHeader seems to be Basic auth
 		mapToken := tokensMap.get(currHeader[1])
 		if mapToken != nil { // If token is in map
 			if mapToken.expire.Unix()-60 < time.Now().Unix() { // If token is about to expire try to get new one
@@ -102,13 +102,11 @@ func getAzureToken(baseKey string) (*tToken, error) {
 	if len(baseSplit) != 2 {
 		return nil, err
 	}
-	ctx := context.Background()
 	publicClientApp, err := public.New(config.ClientID, public.WithAuthority(config.AuthorityURL+config.TenantID))
 	if err != nil {
 		return nil, err
 	}
-	scopes := config.Scopes
-	result, err := publicClientApp.AcquireTokenByUsernamePassword(ctx, scopes, baseSplit[0], baseSplit[1])
+	result, err := publicClientApp.AcquireTokenByUsernamePassword(context.Background(), config.Scopes, baseSplit[0], baseSplit[1])
 	if err != nil {
 		return nil, err
 	}

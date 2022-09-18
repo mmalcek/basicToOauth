@@ -34,13 +34,8 @@ func (t *tTokens) delExpired() {
 	t.mutex.Lock()
 	defer t.mutex.Unlock()
 	for k, v := range t.tokens {
-		if v.expired() {
+		if time.Now().After(v.expire) {
 			delete(t.tokens, k)
 		}
 	}
-}
-
-// Check if token is expired
-func (t *tToken) expired() bool {
-	return time.Now().After(t.expire)
 }

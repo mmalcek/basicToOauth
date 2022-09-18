@@ -1,6 +1,6 @@
 # basicToOauth 
 
-## relay service that transforms a basic authorisation header to an OAuth 2.0 Bearer token. 
+## Proxy service that transforms a basic authorisation header to an OAuth 2.0 Bearer token. 
 - Designed for Exchange Web Services (EWS)
 
 
@@ -13,7 +13,7 @@ This package provides a simple way to migrate from basic authentication to OAuth
 ## You can download Windows version from here:
 https://github.com/mmalcek/basicToOauth/releases
 <br />
-[Direct download link](https://github.com/mmalcek/basicToOauth/releases/download/v1.0.1/basicToOauth_WIN_amd64_v1-0-1.zip)
+[Direct download link](https://github.com/mmalcek/basicToOauth/releases/download/v1.0.2/basicToOauth_WIN_amd64_v1-0-2.zip)
 <br />
 Note: Currently only Windows prebuild binary is available. I'll build Linux or Mac on request.
 
@@ -42,10 +42,10 @@ host 127.0.0.1 is HIGHLY RECOMMENDED because comunication between relay service 
 
 Once the application is running, you can use it in your application so instead "https://outlook.office365.com/..." just use "http://127.0.0.1:8085/..."
 
-**If this app helped you can buy me a coffe ;)**
+**btw: If you like this app you can buy me a coffe ;)**
 
 <a href='https://ko-fi.com/mmalcek' target='_blank'>
-	<img height='25' style='border:0px;height:35px;' src='https://az743702.vo.msecnd.net/cdn/kofi3.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' />
+	<img height='30' style='border:0px;height:40px;' src='https://az743702.vo.msecnd.net/cdn/kofi3.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' />
 </a>
 <br />
 <br />
