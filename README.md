@@ -14,9 +14,9 @@ This package provides a simple way to migrate from basic authentication to OAuth
 ## You can download Windows version from here:
 https://github.com/mmalcek/basicToOauth/releases
 <br />
-[Direct download link](https://github.com/mmalcek/basicToOauth/releases/download/v1.0.2/basicToOauth_WIN_amd64_v1-0-2.zip)
+[Direct Windows download link](https://github.com/mmalcek/basicToOauth/releases/download/v1.0.3/basicToOauth_Windows_amd64_1-0-3.zip)
 <br />
-Note: Currently only Windows prebuild binary is available. I'll build Linux or Mac on request.
+Note: Currently only Windows and Linux (64bit) prebuild binaries are available. I can build binaries for other platforms on request.
 
 
 ### Configuration (config.yaml):

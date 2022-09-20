@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/base64"
+	"errors"
 	"net"
 	"net/http"
 	"net/http/httputil"
@@ -100,7 +101,7 @@ func getAzureToken(baseKey string) (*tToken, error) {
 	}
 	baseSplit := strings.Split(string(baseDecode), ":")
 	if len(baseSplit) != 2 {
-		return nil, err
+		return nil, errors.New("basicAuthParseFailed")
 	}
 	publicClientApp, err := public.New(config.ClientID, public.WithAuthority(config.AuthorityURL+config.TenantID))
 	if err != nil {
