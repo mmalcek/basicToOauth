@@ -1,11 +1,12 @@
 # basicToOauth 
 
-## Proxy service that transforms a basic authorisation header to an OAuth 2.0 Bearer token. 
-- Designed for Exchange Web Services (EWS)
+## HTTP proxy service that transforms a basic authorisation header to an OAuth 2.0 Bearer token. 
+- Designed for Exchange Web Services (EWS) but it may work also with other services that require OAuth 2.0 Bearer token.
+- This application is for HTTP protocol only (not SMTP, POP3, IMAP). 
 
 
 From 01.10.2022 the basic authentication will be deprecated by Microsoft for many services. 
-This package provides a simple way to migrate from basic authentication to OAuth by creating a relay service.
+This package provides a simple way to migrate from basic authentication to OAuth by creating a proxy service.
 
 - Application gets basic header and transform it to OAuth header. Rest of the request is passed to the target service unchanged.
 - Application has been created mainly for Exchange Web Services (EWS) but it should work also with other services.
@@ -20,8 +21,8 @@ Note: Currently only Windows prebuild binary is available. I'll build Linux or M
 
 ### Configuration (config.yaml):
 ```YAML
-host: "127.0.0.1" # Host of the relay service
-port: "8085" # Port of the relay service
+host: "127.0.0.1" # Host of the proxy service
+port: "8085" # Port of the proxy service
 client_id: "yourAzureClientID" # Azure App registration client ID
 tenant_id: "yourAzureTenantID" # Azure tenant ID
 proxy_url: "https://outlook.office365.com" # URL of the target service
@@ -29,7 +30,7 @@ authority_url: "https://login.microsoftonline.com/" # URL of the authority servi
 scopes:
   - "https://outlook.office365.com/EWS.AccessAsUser.All" # Scopes for the target service
 ```
-host 127.0.0.1 is HIGHLY RECOMMENDED because comunication between relay service and your application is not encrypted. In other words, basicToOauth app should be on the same machine as your application.
+host 127.0.0.1 is HIGHLY RECOMMENDED because comunication between proxy service and your application is not encrypted. In other words, basicToOauth app should be on the same machine as your application.
 
 
 ### Installation options:
