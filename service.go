@@ -60,6 +60,12 @@ func proxy(c *gin.Context) {
 		req.URL.Host = remote.Host
 		req.URL.Path = c.Param("proxyPath")
 	}
+	proxy.ModifyResponse = func(resp *http.Response) error {
+		if resp.StatusCode == http.StatusUnauthorized {
+			resp.Header.Set("WWW-Authenticate", "Basic realm=\"basicToOauth\"")
+		}
+		return nil
+	}
 	proxy.ServeHTTP(c.Writer, c.Request)
 }
 
