@@ -16,3 +16,4 @@
 basicToOauth
 
 build
+.claude/settings.json

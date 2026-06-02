@@ -43,6 +43,11 @@ func (p *program) run() {
 	<-p.exit
 }
 
+// basicAuthChallenge is advertised to clients on a 401 so legacy Basic-auth
+// clients know to (re)send credentials, which the proxy then exchanges for an
+// OAuth token.
+const basicAuthChallenge = `Basic realm="basicToOauth"`
+
 func proxy(c *gin.Context) {
 	remote, err := url.Parse(config.ProxyURL)
 	if err != nil {
@@ -61,8 +66,14 @@ func proxy(c *gin.Context) {
 		req.URL.Path = c.Param("proxyPath")
 	}
 	proxy.ModifyResponse = func(resp *http.Response) error {
-		if resp.StatusCode == http.StatusUnauthorized {
-			resp.Header.Set("WWW-Authenticate", "Basic realm=\"basicToOauth\"")
+		// Re-advertise a Basic challenge so legacy clients know to send
+		// credentials — but ONLY for requests that arrived without auth.
+		// Re-challenging a request that already carried (bad) credentials
+		// loops the client and hammers Azure AD with repeated bad-cred
+		// token requests (smart-lockout risk on a live mailbox).
+		if resp.StatusCode == http.StatusUnauthorized &&
+			c.Request.Header.Get("Authorization") == "" {
+			resp.Header.Set("WWW-Authenticate", basicAuthChallenge)
 		}
 		return nil
 	}
