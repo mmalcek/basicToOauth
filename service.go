@@ -66,19 +66,26 @@ func proxy(c *gin.Context) {
 		req.URL.Path = c.Param("proxyPath")
 	}
 	proxy.ModifyResponse = func(resp *http.Response) error {
-		// Re-advertise a Basic challenge so legacy clients know to send
-		// credentials — but ONLY for requests that arrived without auth.
-		// Re-challenging a request that already carried (bad) credentials
-		// loops the client and hammers Azure AD with repeated bad-cred
-		// token requests (smart-lockout risk on a live mailbox).
-		if resp.StatusCode == http.StatusUnauthorized &&
-			c.Request.Header.Get("Authorization") == "" {
-			resp.Header.Set("WWW-Authenticate", basicAuthChallenge)
-		}
+		injectBasicChallenge(resp, c.Request.Header.Get("Authorization"))
 		return nil
 	}
 	proxy.ServeHTTP(c.Writer, c.Request)
 }
+
+// injectBasicChallenge re-advertises a Basic challenge so legacy clients know
+// to send credentials — but ONLY for requests that arrived without auth.
+// Re-challenging a request that already carried (bad) credentials loops the
+// client and hammers Azure AD with repeated bad-cred token requests
+// (smart-lockout risk on a live mailbox).
+func injectBasicChallenge(resp *http.Response, clientAuth string) {
+	if resp.StatusCode == http.StatusUnauthorized && clientAuth == "" {
+		resp.Header.Set("WWW-Authenticate", basicAuthChallenge)
+	}
+}
+
+// acquireToken is the seam used to obtain an Azure token. In production it is
+// the real getAzureToken; tests override it to avoid live Azure AD calls.
+var acquireToken = getAzureToken
 
 func getAuthHeader(authHeader string) string {
 	if strings.Split(authHeader, " ")[0] != "Basic" { // If anythig else than Basic auth, return original header
@@ -89,7 +96,7 @@ func getAuthHeader(authHeader string) string {
 		mapToken := tokensMap.get(currHeader[1])
 		if mapToken != nil { // If token is in map
 			if mapToken.expire.Unix()-60 < time.Now().Unix() { // If token is about to expire try to get new one
-				newToken, err := getAzureToken(currHeader[1])
+				newToken, err := acquireToken(currHeader[1])
 				if err != nil {
 					logger.Warningf("ERR-getAzureToken: %v", err.Error())
 					return authHeader
@@ -98,7 +105,7 @@ func getAuthHeader(authHeader string) string {
 			}
 			return "Bearer " + tokensMap.get(currHeader[1]).token // Return token from map
 		} else { // If token is not in map
-			newToken, err := getAzureToken(currHeader[1]) // Get new token
+			newToken, err := acquireToken(currHeader[1]) // Get new token
 			if err != nil {
 				logger.Warningf("ERR-getAzureToken: %v", err.Error())
 				return authHeader

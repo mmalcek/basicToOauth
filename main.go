@@ -10,7 +10,11 @@ import (
 	"github.com/kardianos/service"
 )
 
-const VERSION = "1.0.3"
+// VERSION is injected at build time via -ldflags "-X main.VERSION=...", read
+// from version.txt (the single source of truth). It MUST stay a var, not a
+// const: the linker can only patch a string variable symbol. Plain `go build`
+// or `go run` leaves it as "dev".
+var VERSION = "dev"
 
 type (
 	program struct {
@@ -21,9 +25,22 @@ type (
 	}
 )
 
+// nopLogger is the default no-op logger so code paths that log (e.g.
+// getAuthHeader's error branch) are safe before main() wires up the real
+// service.Logger — and in tests, where main() never runs. main() overwrites
+// this with the system logger before run() starts, so production is unchanged.
+type nopLogger struct{}
+
+func (nopLogger) Error(v ...any) error                   { return nil }
+func (nopLogger) Warning(v ...any) error                 { return nil }
+func (nopLogger) Info(v ...any) error                    { return nil }
+func (nopLogger) Errorf(format string, a ...any) error   { return nil }
+func (nopLogger) Warningf(format string, a ...any) error { return nil }
+func (nopLogger) Infof(format string, a ...any) error    { return nil }
+
 var (
-	logger    service.Logger
-	tokensMap = tTokens{tokens: make(map[string]*tToken)}
+	logger    service.Logger = nopLogger{}
+	tokensMap                = tTokens{tokens: make(map[string]*tToken)}
 )
 
 func main() {

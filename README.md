@@ -11,12 +11,29 @@ This package provides a simple way to migrate from basic authentication to OAuth
 - Application gets basic header and transform it to OAuth header. Rest of the request is passed to the target service unchanged.
 - Application has been created mainly for Exchange Web Services (EWS) but it should work also with other services.
 
-## You can download Windows version from here:
+## Downloads
+Grab the latest Windows or Linux (64-bit) build from the releases page:
 https://github.com/mmalcek/basicToOauth/releases
-<br />
-[Direct Windows download link](https://github.com/mmalcek/basicToOauth/releases/download/v1.0.3/basicToOauth_Windows_amd64_1-0-3.zip)
-<br />
-Note: Currently only Windows and Linux (64bit) prebuild binaries are available. I can build binaries for other platforms on request.
+
+Each release is built automatically by GitHub Actions from the tagged source and
+ships a `*.zip` plus a matching `*.zip.sha256` checksum. **Verify before running** —
+this proxy handles credentials, so only run binaries you can confirm came from here:
+
+```sh
+# Linux / macOS
+sha256sum -c basicToOauth_Linux_amd64_1-0-4.zip.sha256
+```
+```powershell
+# Windows (compare against the .sha256 contents)
+CertUtil -hashfile basicToOauth_Windows_amd64_1-0-4.zip SHA256
+```
+
+Releases also carry a build-provenance attestation, verifiable with:
+```sh
+gh attestation verify <zip> --repo mmalcek/basicToOauth
+```
+
+Note: only Windows and Linux (64-bit) prebuilt binaries are published. I can build other platforms on request.
 
 
 ### Configuration (config.yaml):

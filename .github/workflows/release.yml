@@ -1,0 +1,84 @@
+name: release
+
+# Builds Windows + Linux (amd64) from tagged source when a GitHub Release is
+# published, then uploads the zips, SHA-256 checksums, and a build-provenance
+# attestation. This is the trusted distribution path: binaries are built by
+# GitHub from the exact tagged commit, never hand-compiled and uploaded.
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write      # upload release assets
+      id-token: write      # OIDC token for build provenance
+      attestations: write  # write the provenance attestation
+    strategy:
+      fail-fast: true
+      matrix:
+        goos: [windows, linux]
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0
+        with:
+          go-version: '1.26'
+          check-latest: true
+
+      - name: Read version.txt and verify it matches the release tag
+        id: ver
+        run: |
+          VERSION="$(tr -d '[:space:]' < version.txt)"
+          [ -n "$VERSION" ] || { echo "::error::version.txt is empty"; exit 1; }
+          TAG="${GITHUB_REF_NAME#v}"
+          if [ "$TAG" != "$VERSION" ]; then
+            echo "::error::version.txt ($VERSION) does not match release tag $GITHUB_REF_NAME ($TAG)"
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "version_dash=${VERSION//./-}" >> "$GITHUB_OUTPUT"
+
+      - name: Test and vet (gate)
+        run: |
+          go test -race ./...
+          go vet ./...
+
+      - name: Build and package
+        id: pkg
+        env:
+          CGO_ENABLED: "0"
+          GOOS: ${{ matrix.goos }}
+          GOARCH: amd64
+          VERSION: ${{ steps.ver.outputs.version }}
+          VERSION_DASH: ${{ steps.ver.outputs.version_dash }}
+        run: |
+          case "$GOOS" in
+            windows) OSNAME=Windows; BIN=basicToOauth.exe ;;
+            linux)   OSNAME=Linux;   BIN=basicToOauth ;;
+            *) echo "::error::unsupported GOOS $GOOS"; exit 1 ;;
+          esac
+          STAGE="basicToOauth_${OSNAME}_amd64_${VERSION_DASH}"
+          mkdir -p "build/${STAGE}"
+          go build -trimpath -ldflags "-s -w -X main.VERSION=${VERSION}" -a -o "build/${STAGE}/${BIN}"
+          cp LICENSE config.yaml README.md "build/${STAGE}/"
+          ( cd build && zip -r "${STAGE}.zip" "${STAGE}" )
+          ( cd build && sha256sum "${STAGE}.zip" > "${STAGE}.zip.sha256" )
+          echo "stage=${STAGE}" >> "$GITHUB_OUTPUT"
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32 # v4.1.0
+        with:
+          subject-path: build/${{ steps.pkg.outputs.stage }}.zip
+
+      - name: Upload assets to the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          STAGE="${{ steps.pkg.outputs.stage }}"
+          gh release upload "$GITHUB_REF_NAME" \
+            "build/${STAGE}.zip" "build/${STAGE}.zip.sha256" --clobber
