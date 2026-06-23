@@ -1,5 +1,7 @@
 # basicToOauth 
 
+> 🪦 **Project status: sunset.** `basicToOauth` did one job — swap a Basic auth header for an OAuth 2.0 Bearer token so legacy clients could keep reaching Exchange Web Services (EWS). Microsoft is retiring EWS in Exchange Online (access blocked from **October 2026**, fully disabled by **April 2027**), which retires this project's reason to exist right along with it. It keeps working until then — and with anything else that accepts an OAuth Bearer token — but no further development is planned. Thanks to everyone who ran it; see the EWS retirement notice below for the details and how to buy a little time.
+
 ## HTTP proxy service that transforms a basic authorisation header to an OAuth 2.0 Bearer token. 
 - Designed for Exchange Web Services (EWS) but it may work also with other services that require OAuth 2.0 Bearer token.
 - This application is for HTTP protocol only (not SMTP, POP3, IMAP). 
@@ -10,6 +12,29 @@ This package provides a simple way to migrate from basic authentication to OAuth
 
 - Application gets basic header and transform it to OAuth header. Rest of the request is passed to the target service unchanged.
 - Application has been created mainly for Exchange Web Services (EWS) but it should work also with other services.
+
+## ⚠️ Heads-up: Exchange Online is retiring EWS
+
+Microsoft is **retiring Exchange Web Services (EWS) in Exchange Online**. Access starts being blocked in **October 2026** and EWS is **fully disabled by April 2027** — and enforcement is rolling out gradually, so some tenants may be cut off earlier. (On-premises **Exchange Server is not affected**.)
+
+This proxy only swaps a Basic auth header for an OAuth token — it can't keep an API alive once Microsoft switches it off. So for Exchange Online, `basicToOauth` is living on borrowed time along with EWS itself.
+
+**Buying time:** until the cut-off, a tenant admin can keep EWS switched on via Exchange Online PowerShell:
+
+```powershell
+Install-Module -Name ExchangeOnlineManagement
+Connect-ExchangeOnline
+
+# Organization (tenant) level - must be True (or unset) for EWS to work
+Set-OrganizationConfig -EwsEnabled $true
+
+# Per-mailbox - enable for all users
+Get-CASMailbox -ResultSize Unlimited | Set-CASMailbox -EwsEnabled $true
+```
+
+**More info:**
+- Microsoft — [Retirement of Exchange Web Services in Exchange Online](https://techcommunity.microsoft.com/blog/exchange/retirement-of-exchange-web-services-in-exchange-online/3924440)
+- Synology — [EWS API error / 403 during Microsoft 365 backups or restores](https://kb.synology.com/en-us/APM/tutorial/Troubleshooting_EWS_migration)
 
 ## Downloads
 Grab the latest Windows or Linux (64-bit) build from the releases page:
