@@ -37,6 +37,16 @@ Get-CASMailbox -ResultSize Unlimited | Set-CASMailbox -EwsEnabled $true
 - Microsoft — [Retirement of Exchange Web Services in Exchange Online](https://techcommunity.microsoft.com/blog/exchange/retirement-of-exchange-web-services-in-exchange-online/3924440)
 - Synology — [EWS API error / 403 during Microsoft 365 backups or restores](https://kb.synology.com/en-us/APM/tutorial/Troubleshooting_EWS_migration)
 
+## Need it on Graph? Let's talk — scoped and paid
+
+This proxy supports 100% of EWS by understanding 0% of it — it just swaps the auth header and forwards the bytes. That's also why it can't simply "become" a Graph tool: re-implementing the whole of EWS on top of Graph is a non-starter (Microsoft itself hasn't closed every parity gap).
+
+A **well-scoped subset**, however, is a different story. If your company genuinely depends on this and there's no clean native path to Graph, I'm open to a **paid engagement** to build a focused EWS-subset → Graph bridge for the operations you actually use (calendar, mail sync, contacts, free/busy — whatever that turns out to be).
+
+I've shipped this shape of work before: [azureSMTPwithOAuth](https://github.com/mmalcek/azureSMTPwithOAuth) relays legacy SMTP to Microsoft 365 entirely over the Graph API, so the OAuth / token / retry plumbing is already proven — only the protocol mapping would be new.
+
+Interested? [Open an issue](https://github.com/mmalcek/basicToOauth/issues/new?title=Graph+migration+inquiry) outlining your client app and the EWS operations you rely on, and we'll take the details from there.
+
 ## Downloads
 
 Grab the latest Windows or Linux (64-bit) build from the releases page:
