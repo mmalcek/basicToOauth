@@ -1,6 +1,6 @@
 # basicToOauth 
 
-> 🪦 **Project status: sunset.** `basicToOauth` did one job — swap a Basic auth header for an OAuth 2.0 Bearer token so legacy clients could keep reaching Exchange Web Services (EWS). Microsoft is retiring EWS in Exchange Online (access blocked from **October 2026**, fully disabled by **April 2027**), which retires this project's reason to exist right along with it. It keeps working until then — and with anything else that accepts an OAuth Bearer token — but no further development is planned. Thanks to everyone who ran it; see the EWS retirement notice below for the details and how to buy a little time.
+> 🪦 **Project status: sunset.** `basicToOauth` did one job — swap a Basic auth header for an OAuth 2.0 Bearer token so legacy clients could keep reaching Exchange Web Services (EWS). Microsoft is retiring EWS in Exchange Online (access blocked from **October 2026**, fully disabled by **April 2027**), which retires this project's reason to exist right along with it. It keeps working until then — and with anything else that accepts an OAuth Bearer token — but no further development is planned unless there's real demand for a Microsoft Graph rewrite (**there's a vote for that below**). Thanks to everyone who ran it; see the EWS retirement notice below for the details and how to buy a little time.
 
 ## HTTP proxy service that transforms a basic authorisation header to an OAuth 2.0 Bearer token. 
 - Designed for Exchange Web Services (EWS) but it may work also with other services that require OAuth 2.0 Bearer token.
@@ -35,6 +35,14 @@ Get-CASMailbox -ResultSize Unlimited | Set-CASMailbox -EwsEnabled $true
 **More info:**
 - Microsoft — [Retirement of Exchange Web Services in Exchange Online](https://techcommunity.microsoft.com/blog/exchange/retirement-of-exchange-web-services-in-exchange-online/3924440)
 - Synology — [EWS API error / 403 during Microsoft 365 backups or restores](https://kb.synology.com/en-us/APM/tutorial/Troubleshooting_EWS_migration)
+
+## ⚰️ Not ready to bury it? Vote for a Graph rewrite
+
+If this tool is genuinely critical to you, the story doesn't have to end with EWS. Moving to the **Microsoft Graph API** is a real project, not a config switch — so I'll only take it on if there's real demand behind it.
+
+**Want a Graph rewrite? [Open an issue titled "Rewrite to Graph"](https://github.com/mmalcek/basicToOauth/issues/new?title=Rewrite+to+Graph)** (or upvote one if it already exists). Gather enough votes and I'm open to a serious discussion.
+
+And it wouldn't start from a blank page: the OAuth2 + Graph plumbing already lives in a sibling project, **[azureSMTPwithOAuth](https://github.com/mmalcek/azureSMTPwithOAuth)** — which relays legacy SMTP to Office 365 over Graph (token cache/renewal, retry with backoff, the lot). Same idea, just a different legacy protocol to translate.
 
 ## Downloads
 Grab the latest Windows or Linux (64-bit) build from the releases page:
