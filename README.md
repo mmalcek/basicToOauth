@@ -1,6 +1,6 @@
 # basicToOauth
 
-> 🪦 **Project status: sunset.** `basicToOauth` did one job — swap a Basic auth header for an OAuth 2.0 Bearer token so legacy clients could keep reaching Exchange Web Services (EWS). Microsoft is retiring EWS in Exchange Online (access blocked from **October 2026**, fully disabled by **April 2027**), which retires this project's reason to exist right along with it. It keeps working until then — and with anything else that accepts an OAuth Bearer token — but no further development is planned. Thanks to everyone who ran it; see the EWS retirement notice below for the details and how to buy a little time.
+> 🪦 **Project status: sunset.** `basicToOauth` did one job — swap a Basic auth header for an OAuth 2.0 Bearer token so legacy clients could keep reaching Exchange Web Services (EWS). Microsoft is retiring EWS in Exchange Online (access blocked from **October 2026**, fully disabled by **April 2027**), which retires this project's reason to exist right along with it. It keeps working until then — and with anything else that accepts an OAuth Bearer token — but no further open-source development is planned, though paid, scoped Graph-migration work is available. Thanks to everyone who ran it; see the EWS retirement notice below for the details and how to buy a little time.
 
 ## HTTP proxy service that transforms a basic authorisation header to an OAuth 2.0 Bearer token.
 
